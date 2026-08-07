@@ -68,11 +68,21 @@ No claim or reason text is stored anywhere — it's sent to the function, used t
 
 **Important:** the API key must be set in Netlify's environment variables for the function to work in production — it is never read from the client, and `.env` is git-ignored so it never gets committed.
 
+## Favicon & link preview
+
+`favicon.svg` is the source icon (a small pixel cottage + heart); `favicon-32x32.png`, `favicon-16x16.png`, and `apple-touch-icon.png` are pre-rendered fallbacks for browsers/devices that don't support SVG favicons. `og-image.png` (rendered from `og-image-source.svg`) is the card image used when the link is shared in iMessage, Slack, etc. — the `<meta property="og:*">` and `<meta name="twitter:*">` tags in `index.html` reference it by root-relative path, which resolves correctly once the site is deployed. If you add a custom domain, consider also adding an `og:url` meta tag with the canonical URL. Note that some apps (iMessage in particular) cache link previews, so a changed image may take a share or two to show up.
+
 ## Project structure
 
 ```
 .
 ├── index.html
+├── favicon.svg
+├── favicon-32x32.png
+├── favicon-16x16.png
+├── apple-touch-icon.png
+├── og-image.png
+├── og-image-source.svg
 ├── css/style.css
 ├── js/app.js
 ├── netlify/
