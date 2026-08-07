@@ -158,7 +158,8 @@
         <div class="field">
           <label for="inspection-file-input">Home inspection PDF</label>
           <input type="file" id="inspection-file-input" class="file-input" accept="application/pdf,.pdf" />
-          <p class="field-hint" id="inspection-file-hint">No file selected. Reports up to ~30MB are supported.</p>
+          <p class="field-hint" id="inspection-file-hint">No file selected, or drop a PDF here. Reports up to ~30MB are supported.</p>
+          <p class="field-hint field-hint--muted">Longer reports (100+ pages) can take a few minutes to process — you can cancel anytime once it starts.</p>
         </div>
 
         <button type="button" id="inspection-generate-btn" class="btn btn--primary" disabled>
@@ -171,10 +172,14 @@
 
       <section class="panel panel--output" id="inspection-progress-panel" hidden aria-live="polite" aria-labelledby="inspection-progress-heading">
         <h2 id="inspection-progress-heading">Working on it…</h2>
+        <p class="output-hint progress-address" id="inspection-progress-address" hidden></p>
         <div class="progress-bar-track">
           <div class="progress-bar-fill" id="inspection-progress-fill"></div>
         </div>
         <p class="output-hint" id="inspection-progress-text">Starting…</p>
+        <button type="button" id="inspection-cancel-btn" class="btn btn--secondary">
+          <span class="btn__label">Cancel</span>
+        </button>
       </section>
 
       <section class="panel panel--output" id="inspection-result-panel" hidden aria-labelledby="inspection-result-heading">

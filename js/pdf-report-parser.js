@@ -359,7 +359,15 @@ async function buildPageEvents(page) {
   return { events };
 }
 
-export async function parseInspectionReport(arrayBuffer, onProgress) {
+function checkAborted(signal) {
+  if (signal && signal.aborted) {
+    throw new DOMException("Cancelled", "AbortError");
+  }
+}
+
+export async function parseInspectionReport(arrayBuffer, onProgress, signal) {
+  checkAborted(signal);
+
   const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
   const pdfDoc = await loadingTask.promise;
   const numPages = pdfDoc.numPages;
@@ -380,6 +388,16 @@ export async function parseInspectionReport(arrayBuffer, onProgress) {
   } catch (err) {
     // Non-critical — leave cover fields blank if the template doesn't match.
   }
+
+  if (onProgress && (address || clientName)) {
+    try {
+      onProgress({ stage: "cover", address, clientName, totalPages: numPages });
+    } catch (err) {
+      // ignore progress callback errors
+    }
+  }
+
+  checkAborted(signal);
 
   // Section map from the first several pages (TOC).
   const sectionMap = new Map();
@@ -421,9 +439,11 @@ export async function parseInspectionReport(arrayBuffer, onProgress) {
   }
 
   for (let p = 1; p <= numPages; p++) {
+    checkAborted(signal);
+
     if (onProgress) {
       try {
-        onProgress({ page: p, totalPages: numPages });
+        onProgress({ stage: "parsing", page: p, totalPages: numPages });
       } catch (err) {
         // ignore progress callback errors
       }
