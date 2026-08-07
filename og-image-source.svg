@@ -31,9 +31,11 @@
     <rect x="3" y="14" width="10" height="1" fill="#5e3b1c"/>
   </g>
 
-  <text x="500" y="270" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="66" fill="#f4e4c1">Warranty Denial</text>
-  <text x="500" y="350" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="66" fill="#e8b23d">Assistant</text>
+  <text x="500" y="300" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="64" fill="#f4e4c1">Property Tools</text>
 
-  <text x="502" y="412" font-family="Georgia, 'Times New Roman', serif" font-size="30" fill="#e6dcc8">Paste a claim, pick a length, get a</text>
-  <text x="502" y="450" font-family="Georgia, 'Times New Roman', serif" font-size="30" fill="#e6dcc8">professional denial email in seconds.</text>
+  <text x="502" y="368" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">Warranty denial emails</text>
+  <text x="502" y="404" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">&amp; inspection report summaries</text>
+
+  <text x="502" y="452" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#e6dcc8">Two quick tools for property</text>
+  <text x="502" y="484" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#e6dcc8">management.</text>
 </svg>
