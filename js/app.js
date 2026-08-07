@@ -10,8 +10,13 @@
   const subjectField = document.getElementById("output-subject-field");
   const bodyField = document.getElementById("output-body-field");
   const errorBox = document.getElementById("error-box");
+  const historyList = document.getElementById("history-list");
+  const historyEmpty = document.getElementById("history-empty");
+  const clearHistoryBtn = document.getElementById("clear-history-btn");
 
   const DRAFT_KEY = "warrantyDenialDraft";
+  const HISTORY_KEY = "warrantyDenialHistory";
+  const HISTORY_LIMIT = 10;
 
   const LOADING_MESSAGES = [
     "Writing the Email",
@@ -130,6 +135,89 @@
     mailtoBtn.disabled = true;
   }
 
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveHistory(history) {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (err) {
+      // localStorage unavailable — history just won't persist this session
+    }
+  }
+
+  function formatTimestamp(ts) {
+    return new Date(ts).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
+  function renderHistory() {
+    const history = loadHistory();
+
+    historyList.querySelectorAll(".history-item").forEach((el) => el.remove());
+
+    if (history.length === 0) {
+      historyEmpty.hidden = false;
+      clearHistoryBtn.hidden = true;
+      return;
+    }
+
+    historyEmpty.hidden = true;
+    clearHistoryBtn.hidden = false;
+
+    history.forEach((entry) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "history-item";
+
+      const subjectEl = document.createElement("span");
+      subjectEl.className = "history-item__subject";
+      subjectEl.textContent = entry.subject;
+
+      const metaEl = document.createElement("span");
+      metaEl.className = "history-item__meta";
+      metaEl.textContent = `${formatTimestamp(entry.timestamp)} · ${entry.length}`;
+
+      const snippetEl = document.createElement("span");
+      snippetEl.className = "history-item__snippet";
+      snippetEl.textContent = entry.body;
+
+      item.appendChild(subjectEl);
+      item.appendChild(metaEl);
+      item.appendChild(snippetEl);
+
+      item.addEventListener("click", () => {
+        clearError();
+        renderEmail(entry.subject, entry.body);
+      });
+
+      historyList.appendChild(item);
+    });
+  }
+
+  function addToHistory(subject, body, length) {
+    const history = loadHistory();
+    history.unshift({ timestamp: Date.now(), subject, body, length });
+    saveHistory(history.slice(0, HISTORY_LIMIT));
+    renderHistory();
+  }
+
+  clearHistoryBtn.addEventListener("click", () => {
+    if (!window.confirm("Clear all saved email history? This can't be undone.")) return;
+    saveHistory([]);
+    renderHistory();
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearError();
@@ -163,6 +251,7 @@
       }
 
       renderEmail(data.subject, data.body);
+      addToHistory(data.subject, data.body, length);
     } catch (err) {
       console.error(err);
       renderEmpty();
@@ -203,4 +292,5 @@
 
   restoreDraft();
   updateGenerateState();
+  renderHistory();
 })();

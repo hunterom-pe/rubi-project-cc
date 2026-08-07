@@ -221,6 +221,10 @@ button:focus-visible {
   transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.15s ease;
 }
 
+.btn[hidden] {
+  display: none;
+}
+
 .btn--primary {
   width: 100%;
   background: var(--color-accent-dark);
@@ -371,6 +375,57 @@ button:focus-visible {
   border-radius: 4px;
   margin-bottom: 1rem;
   font-size: 1.1rem;
+}
+
+/* ---------- History ---------- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+  width: 100%;
+  background: #fffaf0;
+  border: 3px solid var(--color-wood-dark);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.06s ease, background 0.1s ease;
+}
+
+.history-item:hover {
+  background: var(--color-parchment);
+}
+
+.history-item:active {
+  transform: translateY(2px);
+}
+
+.history-item__subject {
+  font-size: 1.2rem;
+  color: var(--color-focus);
+  font-weight: bold;
+}
+
+.history-item__meta {
+  font-size: 1rem;
+  color: var(--color-text-soft);
+  text-transform: capitalize;
+}
+
+.history-item__snippet {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------- Footer ---------- */
