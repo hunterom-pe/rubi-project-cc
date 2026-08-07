@@ -4,10 +4,52 @@
   const reasonInput = document.getElementById("reason-text");
   const generateBtn = document.getElementById("generate-btn");
   const copyBtn = document.getElementById("copy-btn");
-  const outputBox = document.getElementById("output-box");
+  const mailtoBtn = document.getElementById("mailto-btn");
+  const outputEmpty = document.getElementById("output-empty");
+  const outputFields = document.getElementById("output-fields");
+  const subjectField = document.getElementById("output-subject-field");
+  const bodyField = document.getElementById("output-body-field");
   const errorBox = document.getElementById("error-box");
 
-  let lastEmail = null; // { subject, body }
+  const DRAFT_KEY = "warrantyDenialDraft";
+
+  const LOADING_MESSAGES = [
+    "Writing the Email",
+    "Tending the crops",
+    "Asking Lewis for advice",
+    "Sharpening the quill",
+    "Consulting the almanac",
+    "Drafting by candlelight",
+  ];
+  let loadingMessageTimer = null;
+
+  function saveDraft() {
+    try {
+      const length = form.querySelector('input[name="length"]:checked').value;
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ claim: claimInput.value, reason: reasonInput.value, length })
+      );
+    } catch (err) {
+      // localStorage unavailable (private browsing, etc.) — not critical, skip silently
+    }
+  }
+
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      if (draft.claim) claimInput.value = draft.claim;
+      if (draft.reason) reasonInput.value = draft.reason;
+      if (draft.length) {
+        const radio = form.querySelector(`input[name="length"][value="${draft.length}"]`);
+        if (radio) radio.checked = true;
+      }
+    } catch (err) {
+      // corrupt or inaccessible draft — ignore
+    }
+  }
 
   function updateGenerateState() {
     const hasClaim = claimInput.value.trim().length > 0;
@@ -15,14 +57,47 @@
     generateBtn.disabled = !(hasClaim && hasReason) || generateBtn.classList.contains("is-loading");
   }
 
-  claimInput.addEventListener("input", updateGenerateState);
-  reasonInput.addEventListener("input", updateGenerateState);
+  claimInput.addEventListener("input", () => {
+    updateGenerateState();
+    saveDraft();
+  });
+  reasonInput.addEventListener("input", () => {
+    updateGenerateState();
+    saveDraft();
+  });
+  form.querySelectorAll('input[name="length"]').forEach((radio) => {
+    radio.addEventListener("change", saveDraft);
+  });
+
+  function startLoadingMessages() {
+    const label = generateBtn.querySelector(".btn__label");
+    let i = 0;
+    label.textContent = LOADING_MESSAGES[0];
+    loadingMessageTimer = setInterval(() => {
+      i = (i + 1) % LOADING_MESSAGES.length;
+      label.textContent = LOADING_MESSAGES[i];
+    }, 1600);
+  }
+
+  function stopLoadingMessages() {
+    if (loadingMessageTimer) {
+      clearInterval(loadingMessageTimer);
+      loadingMessageTimer = null;
+    }
+    generateBtn.querySelector(".btn__label").textContent = "Write the Email";
+  }
 
   function setLoading(isLoading) {
     generateBtn.classList.toggle("is-loading", isLoading);
     generateBtn.disabled = isLoading || !(claimInput.value.trim() && reasonInput.value.trim());
     claimInput.disabled = isLoading;
     reasonInput.disabled = isLoading;
+
+    if (isLoading) {
+      startLoadingMessages();
+    } else {
+      stopLoadingMessages();
+    }
   }
 
   function showError(message) {
@@ -36,25 +111,23 @@
   }
 
   function renderEmail(subject, body) {
-    outputBox.innerHTML = "";
+    subjectField.value = subject;
+    bodyField.value = body;
 
-    const subjectEl = document.createElement("p");
-    subjectEl.className = "output-subject";
-    subjectEl.textContent = `Subject: ${subject}`;
-
-    const bodyEl = document.createElement("p");
-    bodyEl.className = "output-body";
-    bodyEl.textContent = body;
-
-    outputBox.appendChild(subjectEl);
-    outputBox.appendChild(bodyEl);
+    outputEmpty.hidden = true;
+    outputFields.hidden = false;
 
     copyBtn.disabled = false;
+    mailtoBtn.disabled = false;
+
+    subjectField.focus();
   }
 
   function renderEmpty() {
-    outputBox.innerHTML = '<p class="output-empty">🌱 Your generated email will sprout here once you fill in the claim and reason, then click "Write the Email".</p>';
+    outputEmpty.hidden = false;
+    outputFields.hidden = true;
     copyBtn.disabled = true;
+    mailtoBtn.disabled = true;
   }
 
   form.addEventListener("submit", async (event) => {
@@ -89,11 +162,9 @@
         throw new Error("Malformed response from server");
       }
 
-      lastEmail = { subject: data.subject, body: data.body };
       renderEmail(data.subject, data.body);
     } catch (err) {
       console.error(err);
-      lastEmail = null;
       renderEmpty();
       showError("Something went wrong generating the email, please try again.");
     } finally {
@@ -102,9 +173,9 @@
   });
 
   copyBtn.addEventListener("click", async () => {
-    if (!lastEmail) return;
+    if (copyBtn.disabled) return;
 
-    const fullText = `Subject: ${lastEmail.subject}\n\n${lastEmail.body}`;
+    const fullText = `Subject: ${subjectField.value}\n\n${bodyField.value}`;
 
     try {
       await navigator.clipboard.writeText(fullText);
@@ -122,5 +193,14 @@
     }
   });
 
+  mailtoBtn.addEventListener("click", () => {
+    if (mailtoBtn.disabled) return;
+
+    const subject = encodeURIComponent(subjectField.value);
+    const body = encodeURIComponent(bodyField.value);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  });
+
+  restoreDraft();
   updateGenerateState();
 })();

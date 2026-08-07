@@ -291,13 +291,18 @@ button:focus-visible {
   color: var(--color-text);
 }
 
+.output-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 .output-box {
   background: #fffaf0;
   border: 3px solid var(--color-wood-dark);
   border-radius: 4px;
   padding: 1rem 1.15rem;
   min-height: 180px;
-  white-space: pre-wrap;
   font-size: 1.2rem;
   color: var(--color-text);
 }
@@ -308,16 +313,54 @@ button:focus-visible {
   margin: 0;
 }
 
-.output-subject {
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  color: var(--color-focus);
-  margin: 0 0 1rem;
-  line-height: 1.6;
+.output-fields {
+  animation: fadeInUp 0.35s ease;
 }
 
-.output-body {
-  margin: 0;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.output-hint {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  color: var(--color-text-soft);
+  font-style: italic;
+}
+
+.output-field-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.output-subject-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--color-focus);
+  background: #fff;
+  border: 2px solid var(--color-wood-dark);
+  border-radius: 4px;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 1.1rem;
+}
+
+.output-body-textarea {
+  width: 100%;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--color-text);
+  background: #fff;
+  border: 2px solid var(--color-wood-dark);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  line-height: 1.45;
 }
 
 .error-box {

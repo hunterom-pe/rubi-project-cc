@@ -97,15 +97,30 @@
     <section class="panel panel--output" aria-labelledby="output-heading">
       <div class="output-header">
         <h2 id="output-heading">Generated email</h2>
-        <button type="button" id="copy-btn" class="btn btn--secondary" disabled>
-          <span class="btn__label">Copy</span>
-        </button>
+        <div class="output-actions">
+          <button type="button" id="mailto-btn" class="btn btn--secondary" disabled>
+            <span class="btn__label">Open in Mail</span>
+          </button>
+          <button type="button" id="copy-btn" class="btn btn--secondary" disabled>
+            <span class="btn__label">Copy</span>
+          </button>
+        </div>
       </div>
 
       <div id="error-box" class="error-box" role="alert" hidden></div>
 
-      <div id="output-box" class="output-box" aria-live="polite">
-        <p class="output-empty">🌱 Your generated email will sprout here once you fill in the claim and reason, then click "Write the Email".</p>
+      <div id="output-box" class="output-box">
+        <p class="output-empty" id="output-empty">🌱 Your generated email will sprout here once you fill in the claim and reason, then click "Write the Email".</p>
+
+        <div class="output-fields" id="output-fields" hidden aria-live="polite">
+          <p class="output-hint">Feel free to edit before sending — Copy and Open in Mail use whatever's here.</p>
+
+          <label for="output-subject-field" class="output-field-label">Subject</label>
+          <input type="text" id="output-subject-field" class="output-subject-input" />
+
+          <label for="output-body-field" class="output-field-label">Body</label>
+          <textarea id="output-body-field" class="output-body-textarea" rows="12"></textarea>
+        </div>
       </div>
     </section>
 
