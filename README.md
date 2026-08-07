@@ -41,10 +41,10 @@ No claim or reason text is stored anywhere — it's sent to the function, used t
    Then edit `.env`:
 
    ```
-   GEMINI_API_KEY=AIza...
+   GEMINI_API_KEY=<paste your key here>
    ```
 
-   Get a key from [Google AI Studio](https://aistudio.google.com/apikey) — click **Create API key**. This is a separate free-tier API key tied to your Google account, not the same as a Gemini subscription.
+   Get a key from [Google AI Studio](https://aistudio.google.com/apikey) — click **Create API key** and paste whatever string it gives you.
 
 4. Start the local dev server (serves the static site AND the function together):
 
