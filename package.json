@@ -1,7 +1,7 @@
 {
   "name": "warranty-denial-assistant",
   "version": "1.0.0",
-  "description": "Stardew-themed static app that generates professional warranty denial emails via a Netlify function calling the Gemini API.",
+  "description": "Stardew-themed static app for property management: generates warranty denial emails and summarizes home inspection PDFs into Word documents, both via Netlify functions calling the Gemini API.",
   "private": true,
   "scripts": {
     "dev": "netlify dev"

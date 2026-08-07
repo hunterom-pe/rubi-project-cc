@@ -1,8 +1,11 @@
 # Warranty Denial Assistant 🏡💌
 
-A small, cozy internal tool for a property management employee to turn a pasted warranty claim into a professional, empathetic denial email — styled like a pixel-art farm.
+A small, cozy internal tool for a property management employee, styled like a pixel-art farm. Two tabs:
 
-## What it does
+1. **Denial Email** — turn a pasted warranty claim into a professional, empathetic denial email.
+2. **Inspection Report Summary** — turn a 100+ page home inspection PDF into a downloadable Word summary of just the defects.
+
+## Denial Email tab
 
 1. Paste the customer's warranty claim into the first box.
 2. Write a short, informal note on why it's being denied (e.g. "not covered under warranty terms, item is over 2 years old").
@@ -12,11 +15,25 @@ A small, cozy internal tool for a property management employee to turn a pasted 
 
 No claim or reason text is stored anywhere — it's sent to the function, used to generate the email, and discarded.
 
+## Inspection Report Summary tab
+
+1. Upload a home inspection PDF (up to ~30MB, 100+ pages, hundreds of photos are fine).
+2. The PDF is parsed **entirely in your browser** using `pdfjs-dist` — it never leaves your machine. The parser:
+   - Reads the table of contents to map section numbers to category names.
+   - Walks each page's text to find defect items (headings like `4.2.1 Paint & Caulking`), the report's own "Possible defect, contractor recommendation" divider, and the inline "Significant and/or Safety Concern" marker that promotes an item to **Red**. Everything else defaults to **Orange**.
+   - Walks each page's embedded images (not full-page screenshots) to extract the real defect photos, filtering out small reused UI icons, and associates each photo with whichever item it falls under.
+3. Only short text (item numbers, titles, description paragraphs — no images) is sent to a Netlify function that calls the Gemini API, batched across all items at once, to generate a 1–2 sentence plain-English summary per item.
+4. A `.docx` is assembled **entirely in your browser** (via the `docx` package) — cover page, then a Red Defects section (grouped by category, with photos), then an Orange Defects section (grouped by category, text only) — and downloaded via `file-saver`.
+
+Because the heuristics that find items/severity/photos are inherently a bit fuzzy against real-world PDF layout, treat the output as a strong first draft and skim it before sending.
+
 ## Tech stack
 
-- Plain HTML/CSS/JS static frontend (no build step, no framework)
-- One Netlify serverless function (`netlify/functions/generate-email.js`) using `@google/genai` (Gemini API), model `gemini-3.6-flash`
-- Deployed as a Netlify static site + function
+- Plain HTML/CSS/JS static frontend (no build step, no framework) — the Inspection Report tab's heavier libraries (`pdfjs-dist`, `docx`, `file-saver`) are loaded via CDN ES module imports rather than an npm bundler, keeping the "no build step" setup intact.
+- Two Netlify serverless functions, both using `@google/genai` (Gemini API), model `gemini-3.6-flash`:
+  - `netlify/functions/generate-email.js` — denial emails
+  - `netlify/functions/summarize-defects.js` — batched inspection-item summaries
+- Deployed as a Netlify static site + functions
 
 ## Running locally
 
@@ -64,9 +81,11 @@ No claim or reason text is stored anywhere — it's sent to the function, used t
    - No build command needed (static site).
 4. Go to **Site settings → Environment variables** and add:
    - `GEMINI_API_KEY` = your Gemini API key
-5. Deploy. The function will be available at `/.netlify/functions/generate-email`.
+5. Deploy. The functions will be available at `/.netlify/functions/generate-email` and `/.netlify/functions/summarize-defects`.
 
-**Important:** the API key must be set in Netlify's environment variables for the function to work in production — it is never read from the client, and `.env` is git-ignored so it never gets committed.
+**Important:** the API key must be set in Netlify's environment variables for both functions to work in production — it is never read from the client, and `.env` is git-ignored so it never gets committed.
+
+**Netlify function size limit:** the `summarize-defects` function only ever receives item numbers, titles, and short description text — never the PDF or its photos — so it stays well under Netlify's request-size limits regardless of how large the source PDF is.
 
 ## Favicon & link preview
 
@@ -84,10 +103,16 @@ No claim or reason text is stored anywhere — it's sent to the function, used t
 ├── og-image.png
 ├── og-image-source.svg
 ├── css/style.css
-├── js/app.js
+├── js/
+│   ├── app.js                    # Denial Email tab logic
+│   ├── tabs.js                   # tab switcher
+│   ├── inspection-app.js         # Inspection Report tab logic (UI wiring)
+│   ├── pdf-report-parser.js      # client-side PDF parsing (pdfjs-dist)
+│   └── docx-builder.js           # client-side .docx assembly (docx + file-saver)
 ├── netlify/
 │   └── functions/
-│       └── generate-email.js
+│       ├── generate-email.js
+│       └── summarize-defects.js
 ├── netlify.toml
 ├── package.json
 ├── .env.example

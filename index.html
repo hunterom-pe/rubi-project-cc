@@ -41,6 +41,17 @@
       <h1 class="header__title">Warranty Denial Assistant</h1>
       <div class="header__icon" aria-hidden="true">💌</div>
     </header>
+
+    <div class="tab-switcher" role="tablist" aria-label="Tool">
+      <button type="button" class="tab-btn is-active" id="tab-btn-denial" role="tab" aria-selected="true" aria-controls="tab-denial">
+        Denial Email
+      </button>
+      <button type="button" class="tab-btn" id="tab-btn-inspection" role="tab" aria-selected="false" aria-controls="tab-inspection">
+        Inspection Report Summary
+      </button>
+    </div>
+
+    <div id="tab-denial" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-denial">
     <p class="header__subtitle">Turn a claim into a clear, kind denial letter — no scarecrow lawyer required.</p>
 
     <section class="panel" aria-labelledby="form-heading">
@@ -136,6 +147,44 @@
         <p class="output-empty" id="history-empty">📜 Emails you generate will show up here so you can revisit or reuse them. Saved only on this laptop.</p>
       </div>
     </section>
+    </div>
+
+    <div id="tab-inspection" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-inspection" hidden>
+      <p class="header__subtitle">Upload a home inspection PDF and get a clean, organized Word summary of the defects.</p>
+
+      <section class="panel" aria-labelledby="inspection-form-heading">
+        <h2 id="inspection-form-heading" class="visually-hidden">Upload inspection report</h2>
+
+        <div class="field">
+          <label for="inspection-file-input">Home inspection PDF</label>
+          <input type="file" id="inspection-file-input" class="file-input" accept="application/pdf,.pdf" />
+          <p class="field-hint" id="inspection-file-hint">No file selected. Reports up to ~30MB are supported.</p>
+        </div>
+
+        <button type="button" id="inspection-generate-btn" class="btn btn--primary" disabled>
+          <span class="btn__label">Generate Summary</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+      </section>
+
+      <div id="inspection-error-box" class="error-box" role="alert" hidden></div>
+
+      <section class="panel panel--output" id="inspection-progress-panel" hidden aria-live="polite" aria-labelledby="inspection-progress-heading">
+        <h2 id="inspection-progress-heading">Working on it…</h2>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="inspection-progress-fill"></div>
+        </div>
+        <p class="output-hint" id="inspection-progress-text">Starting…</p>
+      </section>
+
+      <section class="panel panel--output" id="inspection-result-panel" hidden aria-labelledby="inspection-result-heading">
+        <h2 id="inspection-result-heading">Summary ready</h2>
+        <p class="output-hint" id="inspection-result-summary"></p>
+        <button type="button" id="inspection-download-btn" class="btn btn--secondary">
+          <span class="btn__label">Download Word Document</span>
+        </button>
+      </section>
+    </div>
 
     <footer class="footer">
       <p>Made for the front desk, styled like the farm. 🚜</p>
@@ -143,5 +192,7 @@
   </main>
 
   <script src="js/app.js"></script>
+  <script src="js/tabs.js"></script>
+  <script type="module" src="js/inspection-app.js"></script>
 </body>
 </html>

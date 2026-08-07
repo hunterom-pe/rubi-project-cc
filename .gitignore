@@ -5,3 +5,8 @@ node_modules/
 dist/
 .DS_Store
 npm-debug.log*
+
+# Sample/fixture inspection report PDFs (contain real client PII) — never commit
+*Home_Inspection_Report*.pdf
+*inspection-report*.pdf
+/fixtures/
