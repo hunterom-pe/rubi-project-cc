@@ -1,4 +1,6 @@
-const Anthropic = require("@anthropic-ai/sdk");
+const { GoogleGenAI } = require("@google/genai");
+
+const MODEL = "gemini-3.6-flash";
 
 const LENGTH_INSTRUCTIONS = {
   short:
@@ -7,6 +9,15 @@ const LENGTH_INSTRUCTIONS = {
     "MEDIUM: A few short paragraphs — a brief acknowledgment of the claim, a clear explanation of the denial reason, and next steps.",
   long:
     "LONG: A fuller email with a warm acknowledgment of the claim, a detailed explanation of the denial that references specifics from the pasted claim, information on next steps or how to appeal, and a proper closing.",
+};
+
+const RESPONSE_SCHEMA = {
+  type: "object",
+  properties: {
+    subject: { type: "string" },
+    body: { type: "string" },
+  },
+  required: ["subject", "body"],
 };
 
 function buildPrompt(claim, reason, length) {
@@ -31,18 +42,7 @@ Length requirement: ${lengthInstruction}
 
 Sign the email off with generic placeholders the employee will fill in herself, such as "[Your Name]" and "[Property Management Company]" — do not invent a real name or company.
 
-Respond with ONLY a raw JSON object (no markdown fences, no commentary) in exactly this shape:
-{"subject": "<email subject line>", "body": "<full email body, using \\n for line breaks between paragraphs>"}`;
-}
-
-function extractJson(text) {
-  const trimmed = text.trim();
-  const start = trimmed.indexOf("{");
-  const end = trimmed.lastIndexOf("}");
-  if (start === -1 || end === -1 || end < start) {
-    throw new Error("No JSON object found in model response");
-  }
-  return JSON.parse(trimmed.slice(start, end + 1));
+Respond with the subject line and full email body (use \\n for line breaks between paragraphs in the body).`;
 }
 
 exports.handler = async (event) => {
@@ -72,34 +72,27 @@ exports.handler = async (event) => {
     };
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error("ANTHROPIC_API_KEY is not set");
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("GEMINI_API_KEY is not set");
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server is not configured correctly" }),
     };
   }
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1024,
-      messages: [
-        {
-          role: "user",
-          content: buildPrompt(claim, reason, length),
-        },
-      ],
+    const response = await ai.models.generateContent({
+      model: MODEL,
+      contents: buildPrompt(claim, reason, length),
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: RESPONSE_SCHEMA,
+      },
     });
 
-    const textBlock = message.content.find((block) => block.type === "text");
-    if (!textBlock) {
-      throw new Error("No text content in model response");
-    }
-
-    const { subject, body } = extractJson(textBlock.text);
+    const { subject, body } = JSON.parse(response.text);
 
     if (!subject || !body) {
       throw new Error("Model response missing subject or body");

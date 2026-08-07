@@ -1,12 +1,12 @@
 {
   "name": "warranty-denial-assistant",
   "version": "1.0.0",
-  "description": "Stardew-themed static app that generates professional warranty denial emails via a Netlify function calling the Anthropic API.",
+  "description": "Stardew-themed static app that generates professional warranty denial emails via a Netlify function calling the Gemini API.",
   "private": true,
   "scripts": {
     "dev": "netlify dev"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1"
+    "@google/genai": "^2.16.0"
   }
 }
