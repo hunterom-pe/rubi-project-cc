@@ -207,6 +207,7 @@
             rows="8"
             placeholder="Paste a paragraph, note, or rough draft here…"
           ></textarea>
+          <p class="field-hint field-hint--right" id="rewrite-char-count">0 / 20,000 characters</p>
         </div>
 
         <button type="button" id="rewrite-btn" class="btn btn--primary" disabled>
@@ -218,9 +219,14 @@
       <section class="panel panel--output" aria-labelledby="rewrite-output-heading">
         <div class="output-header">
           <h2 id="rewrite-output-heading">Rewritten text</h2>
-          <button type="button" id="rewrite-copy-btn" class="btn btn--secondary" disabled>
-            <span class="btn__label">Copy</span>
-          </button>
+          <div class="output-actions">
+            <button type="button" id="rewrite-refine-btn" class="btn btn--secondary" disabled>
+              <span class="btn__label">Refine Again</span>
+            </button>
+            <button type="button" id="rewrite-copy-btn" class="btn btn--secondary" disabled>
+              <span class="btn__label">Copy</span>
+            </button>
+          </div>
         </div>
 
         <div id="rewrite-error-box" class="error-box" role="alert" hidden></div>
@@ -231,6 +237,7 @@
           <div class="output-fields" id="rewrite-output-fields" hidden>
             <p class="output-hint">Feel free to edit before copying.</p>
             <textarea id="rewrite-output-field" class="output-body-textarea" rows="10"></textarea>
+            <p class="field-hint" id="rewrite-output-stats"></p>
           </div>
         </div>
       </section>

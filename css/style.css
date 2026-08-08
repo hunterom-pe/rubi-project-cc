@@ -483,6 +483,15 @@ button:focus-visible {
   opacity: 0.85;
 }
 
+.field-hint--warning {
+  color: var(--color-heart);
+  font-weight: bold;
+}
+
+.field-hint--right {
+  text-align: right;
+}
+
 .file-input {
   display: block;
   width: 100%;
