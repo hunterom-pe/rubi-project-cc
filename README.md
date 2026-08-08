@@ -1,9 +1,10 @@
 # Property Tools 🏡💌
 
-A small, cozy internal tool for a property management employee, styled like a pixel-art farm. Two tabs:
+A small, cozy internal tool for a property management employee, styled like a pixel-art farm. Three tabs:
 
 1. **Denial Email** — turn a pasted warranty claim into a professional, empathetic denial email.
 2. **Inspection Report Summary** — turn a 100+ page home inspection PDF into a downloadable Word summary of just the defects.
+3. **Text Rewriter** — paste a rough paragraph or note and get a polished, professional rewrite.
 
 ## Denial Email tab
 
@@ -27,12 +28,19 @@ No claim or reason text is stored anywhere — it's sent to the function, used t
 
 Because the heuristics that find items/severity/photos are inherently a bit fuzzy against real-world PDF layout, treat the output as a strong first draft and skim it before sending.
 
+## Text Rewriter tab
+
+1. Paste a rough paragraph, note, or draft into the box.
+2. Click **Rewrite** — a Netlify serverless function calls the Gemini API to polish the grammar, tone, and formatting while keeping the original meaning and facts intact. It won't invent content or add a greeting/sign-off that wasn't already there.
+3. Edit the result if needed, then **Copy** it.
+
 ## Tech stack
 
 - Plain HTML/CSS/JS static frontend (no build step, no framework) — the Inspection Report tab's heavier libraries (`pdfjs-dist`, `docx`, `file-saver`) are loaded via CDN ES module imports rather than an npm bundler, keeping the "no build step" setup intact.
-- Two Netlify serverless functions, both using `@google/genai` (Gemini API), model `gemini-3.6-flash`:
+- Three Netlify serverless functions, all using `@google/genai` (Gemini API), model `gemini-3.6-flash`:
   - `netlify/functions/generate-email.js` — denial emails
   - `netlify/functions/summarize-defects.js` — batched inspection-item summaries
+  - `netlify/functions/rewrite-text.js` — text rewriting
 - Deployed as a Netlify static site + functions
 
 ## Running locally
@@ -81,9 +89,9 @@ Because the heuristics that find items/severity/photos are inherently a bit fuzz
    - No build command needed (static site).
 4. Go to **Site settings → Environment variables** and add:
    - `GEMINI_API_KEY` = your Gemini API key
-5. Deploy. The functions will be available at `/.netlify/functions/generate-email` and `/.netlify/functions/summarize-defects`.
+5. Deploy. The functions will be available at `/.netlify/functions/generate-email`, `/.netlify/functions/summarize-defects`, and `/.netlify/functions/rewrite-text`.
 
-**Important:** the API key must be set in Netlify's environment variables for both functions to work in production — it is never read from the client, and `.env` is git-ignored so it never gets committed.
+**Important:** the API key must be set in Netlify's environment variables for all three functions to work in production — it is never read from the client, and `.env` is git-ignored so it never gets committed.
 
 **Netlify function size limit:** the `summarize-defects` function only ever receives item numbers, titles, and short description text — never the PDF or its photos — so it stays well under Netlify's request-size limits regardless of how large the source PDF is.
 
@@ -108,11 +116,13 @@ Because the heuristics that find items/severity/photos are inherently a bit fuzz
 │   ├── tabs.js                   # tab switcher
 │   ├── inspection-app.js         # Inspection Report tab logic (UI wiring)
 │   ├── pdf-report-parser.js      # client-side PDF parsing (pdfjs-dist)
-│   └── docx-builder.js           # client-side .docx assembly (docx + file-saver)
+│   ├── docx-builder.js           # client-side .docx assembly (docx + file-saver)
+│   └── rewrite-app.js            # Text Rewriter tab logic
 ├── netlify/
 │   └── functions/
 │       ├── generate-email.js
-│       └── summarize-defects.js
+│       ├── summarize-defects.js
+│       └── rewrite-text.js
 ├── netlify.toml
 ├── package.json
 ├── .env.example

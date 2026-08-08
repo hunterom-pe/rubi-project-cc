@@ -2,6 +2,7 @@
   const tabs = [
     { btn: document.getElementById("tab-btn-denial"), panel: document.getElementById("tab-denial") },
     { btn: document.getElementById("tab-btn-inspection"), panel: document.getElementById("tab-inspection") },
+    { btn: document.getElementById("tab-btn-rewrite"), panel: document.getElementById("tab-rewrite") },
   ];
 
   function activate(target) {

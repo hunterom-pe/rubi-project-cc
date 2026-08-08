@@ -33,9 +33,9 @@
 
   <text x="500" y="300" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="64" fill="#f4e4c1">Property Tools</text>
 
-  <text x="502" y="368" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">Warranty denial emails</text>
-  <text x="502" y="404" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">&amp; inspection report summaries</text>
+  <text x="502" y="368" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">Denial emails, inspection</text>
+  <text x="502" y="404" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#e8b23d">summaries &amp; text rewrites</text>
 
-  <text x="502" y="452" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#e6dcc8">Two quick tools for property</text>
+  <text x="502" y="452" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#e6dcc8">Three quick tools for property</text>
   <text x="502" y="484" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#e6dcc8">management.</text>
 </svg>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Property Tools</title>
-  <meta name="description" content="Write warranty denial emails and summarize home inspection reports — two quick tools for property management." />
+  <meta name="description" content="Write warranty denial emails, summarize home inspection reports, and polish rough drafts — quick tools for property management." />
 
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -15,7 +15,7 @@
   <!-- Open Graph / link previews (iMessage, Slack, etc.) -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Property Tools" />
-  <meta property="og:description" content="Write warranty denial emails and summarize home inspection reports — two quick tools for property management." />
+  <meta property="og:description" content="Write warranty denial emails, summarize home inspection reports, and polish rough drafts — quick tools for property management." />
   <meta property="og:image" content="/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -23,7 +23,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Property Tools" />
-  <meta name="twitter:description" content="Write warranty denial emails and summarize home inspection reports — two quick tools for property management." />
+  <meta name="twitter:description" content="Write warranty denial emails, summarize home inspection reports, and polish rough drafts — quick tools for property management." />
   <meta name="twitter:image" content="/og-image.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,6 +48,9 @@
       </button>
       <button type="button" class="tab-btn" id="tab-btn-inspection" role="tab" aria-selected="false" aria-controls="tab-inspection">
         Inspection Report Summary
+      </button>
+      <button type="button" class="tab-btn" id="tab-btn-rewrite" role="tab" aria-selected="false" aria-controls="tab-rewrite">
+        Text Rewriter
       </button>
     </div>
 
@@ -191,6 +194,48 @@
       </section>
     </div>
 
+    <div id="tab-rewrite" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-rewrite" hidden>
+      <p class="header__subtitle">Paste a paragraph or note and get a polished, professional version.</p>
+
+      <section class="panel" aria-labelledby="rewrite-form-heading">
+        <h2 id="rewrite-form-heading" class="visually-hidden">Rewrite text</h2>
+
+        <div class="field">
+          <label for="rewrite-input">What you wrote</label>
+          <textarea
+            id="rewrite-input"
+            rows="8"
+            placeholder="Paste a paragraph, note, or rough draft here…"
+          ></textarea>
+        </div>
+
+        <button type="button" id="rewrite-btn" class="btn btn--primary" disabled>
+          <span class="btn__label">Rewrite</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+      </section>
+
+      <section class="panel panel--output" aria-labelledby="rewrite-output-heading">
+        <div class="output-header">
+          <h2 id="rewrite-output-heading">Rewritten text</h2>
+          <button type="button" id="rewrite-copy-btn" class="btn btn--secondary" disabled>
+            <span class="btn__label">Copy</span>
+          </button>
+        </div>
+
+        <div id="rewrite-error-box" class="error-box" role="alert" hidden></div>
+
+        <div class="output-box" id="rewrite-output-box">
+          <p class="output-empty" id="rewrite-output-empty">✍️ Your polished text will show up here.</p>
+
+          <div class="output-fields" id="rewrite-output-fields" hidden>
+            <p class="output-hint">Feel free to edit before copying.</p>
+            <textarea id="rewrite-output-field" class="output-body-textarea" rows="10"></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <footer class="footer">
       <p>Made with ❤️, styled like the farm. 🚜</p>
     </footer>
@@ -198,6 +243,7 @@
 
   <script src="js/app.js"></script>
   <script src="js/tabs.js"></script>
+  <script src="js/rewrite-app.js"></script>
   <script type="module" src="js/inspection-app.js"></script>
 </body>
 </html>
